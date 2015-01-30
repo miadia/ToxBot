@@ -24,3 +24,6 @@ libtoxav
 Führe `make` im Terminal aus
 
 Bemerkung: Wenn der Fehler `cannot open shared object file: No such file or directory` erscheint, versuche `sudo ldconfig` auszuführen.
+
+
+Dieses Projekt ist ein Fork von: https://github.com/JFreegman/ToxBot
