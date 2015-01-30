@@ -1,5 +1,5 @@
 # ToxBot
-Der Tox-Bot ist ein [Tox](https://tox.im) Bot, der dazu da ist, Freunde automatisch in Gruppen einzuladen. Er nimmt Einladungen automatisch an und lädt diese in die Gruppe ein(Standard ist ohne eigen Änderung Gruppe 0). Er kann auch Gruppen erstellen, verlassen, mit Passwort geschützten Gruppen umgehen, Gruppen verwalten und Nachrichten in Gruppen senden.
+Der Tox-Bot ist ein [Tox](https://tox.im) Bot, der dazu da ist, Freunde automatisch in Gruppen einzuladen. Er nimmt Einladungen automatisch an und lädt diese in die Gruppe ein(Standard ist ohne eigene Änderung Gruppe 0). Er kann auch Gruppen erstellen, verlassen, mit Passwort geschützten Gruppen umgehen, Gruppen verwalten und Nachrichten in Gruppen senden.
 
 Die Funktionalität ist momentan recht spartanisch und ist einfach zu Erweitern, bis Gruppen-Administrationen in Tox möglich sind.
 
