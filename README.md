@@ -4,7 +4,7 @@ Der Tox-Bot ist ein [Tox](https://tox.im) Bot, der dazu da ist, Freunde automati
 Die Funktionalität ist momentan recht spartanisch und ist einfach zu Erweitern, bis Gruppen-Administrationen in Tox möglich sind.
 
 ## Handhabung
-Um den Bot zu Verwalten, musst die Tox-ID in die masterkey-Datei eingtragen werden. Sobald der Bot dann als Freund hinzugefügt wurde, kann man ihm [Administratoren-Befehle](https://github.com/JFreegman/ToxBot/blob/master/commands.txt) schicken, wie normale Nachrichten. Es gibt keine graphische Oberfläche.
+Um den Bot zu Verwalten, muss die Tox-ID in die masterkey-Datei eingtragen werden. Sobald der Bot dann als Freund hinzugefügt wurde, kann man ihm [Administratoren-Befehle](https://github.com/JFreegman/ToxBot/blob/master/commands.txt) schicken, wie normale Nachrichten. Es gibt keine graphische Oberfläche.
 
 Bemerkung: ToxBot akzeptiert Gruppen-Einladungen des Administrators automatisch.
 
