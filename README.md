@@ -13,7 +13,7 @@ Bemerkung: ToxBot akzeptiert Gruppen-Einladungen des Administrators automatisch.
 * `info` - Zeigt den Status des Bots
 * `id` - Zeigt die Tox-ID des Bots
 * `hallo` - Lädt dich in den bestehenden Gruppen-Chat
-* `invite <n> <pass>` - Lädt dich in eine mit einem Passwort geschütze Gruppe ein
+* `hallo <n> <pass>` - Lädt dich in eine mit einem Passwort geschütze Gruppe ein
 
 ## Anhängigkeiten
 pkg-config
