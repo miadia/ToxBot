@@ -1,26 +1,26 @@
 # ToxBot
-ToxBot is a remotely controlled [Tox](https://tox.im) bot whose purpose is to auto-invite friends to Tox groupchats. It accepts friend requests automatically and will auto-invite friends to the specified group chat (default is group 0 unless set otherwise). It also has the ability to create and leave groups, password protect invites, and send messages to groups.
+Der Tox-Bot ist ein [Tox](https://tox.im) Bot, der dazu da ist, Freunde automatisch in Gruppen einzuladen. IEr nimmt Einladungen automatisch an und lädt diese in die Gruppe ein(Standard ist ohne eigen Änderung Gruppe 0). Er kann auch Gruppen erstellen, verlassen, mit Passwort geschützten Gruppen umgehen, Gruppen verwalten und Nachrichten in Gruppen senden.
 
-Although current functionality is barebones, it will be easy to expand the bot to act in more comprehensive ways once Tox group chats are fully implemented (e.g. admin duties); this was the main motivation behind creating a proper Tox bot.
+Die Funktionalität ist momentan recht spartanisch und ist einfach zu Erweitern, bis Gruppen-Administrationen in Tox möglich sind.
 
-## Controlling
-In order to control the bot you must add your Tox ID to the masterkeys file. Once you add the bot as a friend, you can send it [privileged commands](https://github.com/JFreegman/ToxBot/blob/master/commands.txt) as normal messages; there is no front-end.
+## Handhabung
+Um den Bot zu Verwalten, musst die Tox-ID in die masterkey-Datei eingtragen werden. Sobald der Bot dann als Freund hinzugefügt wurde, kann man ihm [Administratoren-Befehle](https://github.com/JFreegman/ToxBot/blob/master/commands.txt) schicken, wie normale Nachrichten. Es gibt keine graphische Oberfläche.
 
-Note: ToxBot will automatically accept a groupchat invite from a master.
+Bemerkung: ToxBot akzeptiert Gruppen-Einladungen des Administrators automatisch.
 
-### Non-privileged commands
-* `help` - Print this message
-* `info` - Print current status and list active group chats
-* `id` - Print Tox ID
-* `invite` - Request invite to default group chat
-* `invite <n> <pass>` - Request invite to group chat n (with password if necessary)
+### Non-Admin Befehle
+* `hilfe` - Zeigt diese Nachricht
+* `info` - Zeigt den Status des Bots
+* `id` - Zeigt die Tox-ID des Bots
+* `hallo` - Lädt dich in den bestehenden Gruppen-Chat
+* `invite <n> <pass>` - Lädt dich in eine mit einem Passwort geschütze Gruppe ein
 
-## Dependencies
+## Anhängigkeiten
 pkg-config
 [libtoxcore](https://github.com/irungentoo/toxcore)
 libtoxav
 
-## Compiling
-Run `make`
+## Kompilieren
+Führe `make` im Terminal aus
 
-Note: If you get an error that says `cannot open shared object file: No such file or directory`, try running `sudo ldconfig`.
+Bemerkung: Wenn der Fehler `cannot open shared object file: No such file or directory` erscheint, versuche `sudo ldconfig` auszuführen.
