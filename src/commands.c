@@ -209,20 +209,20 @@ static void cmd_help(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_L
 {
     const char *outmsg;
 
-    outmsg = "info : Print my current status and list active group chats";
+    outmsg = "info : Zeigt dir den Status des Bots, sowie die Gruppenchats";
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
 
-    outmsg = "id : Print my Tox ID";
+    outmsg = "id : Zeigt dir die Tox-ID des Bots";
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
 
-    outmsg = "invite : Request invite to default group chat";
+    outmsg = "hallo : Lädt dich in den bestehenden Gruppen-Chat";
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
 
-    outmsg = "invite <n> <p> : Request invite to group chat n (with password p if protected)";
+    outmsg = "hallo <n> <p> : Lädt dich in eine mit einem Passwort geschütze Gruppe ein";
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
 
     if (friend_is_master(m, friendnum)) {
-        outmsg = "For a list of master commands see the commands.txt file";
+        outmsg = "Für Master-Kommands gucke in die Commands.txt oder frage den Admin des Bots";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
     }
 }
@@ -748,10 +748,10 @@ static struct {
     { "default",          cmd_default       },
     { "group",            cmd_group         },
     { "gmessage",         cmd_gmessage      },
-    { "help",             cmd_help          },
+    { "hilfe",            cmd_help          },
     { "id",               cmd_id            },
     { "info",             cmd_info          },
-    { "invite",           cmd_invite        },
+    { "hallo",             cmd_invite        },
     { "leave",            cmd_leave         },
     { "master",           cmd_master        },
     { "name",             cmd_name          },
