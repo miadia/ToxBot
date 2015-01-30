@@ -166,7 +166,7 @@ static void cb_friend_message(Tox *m, int32_t friendnumber, const uint8_t *strin
     message[length] = '\0';
 
     if (length && execute(m, friendnumber, message, length) == -1) {
-        outmsg = "Invalid command. Type help for a list of commands";
+        outmsg = "Ungültiger Befehl. Bitte gib hilfe ein, um dir die Befehle anzeigen zu lassen.";
         tox_send_message(m, friendnumber, (uint8_t *) outmsg, strlen(outmsg));
     }
 }
