@@ -36,6 +36,8 @@
 #include <tox/tox.h>
 #include <tox/toxav.h>
 
+#include <dirent.h>
+
 #include "misc.h"
 #include "commands.h"
 #include "toxbot.h"
@@ -425,12 +427,47 @@ static useconds_t optimal_msleepval(uint64_t *looptimer, uint64_t *loopcount, ui
     return new_sleep;
 }
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
     signal(SIGINT, catch_SIGINT);
     umask(S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
 
     Tox *m = init_tox();
+
+    //Flags and help - Menue
+
+    printf("\n");
+    printf(" _____           ____        _   \n");
+    printf("|_   _|____  __ | __ )  ___ | |_ \n");
+    printf("  | |/ _ \\ \\/ / |  _ \\ / _ \\| __|  \n");
+    printf("  | | (_) >  <  | |_) | (_) | |_   \n");
+    printf("  |_|\\___/_/\\_\\ |____/ \\___/ \\__| \n");
+
+    if (strcmp(argv[1], "-b")==0 || strcmp(argv[1], "--background")==0){
+        printf("\nStarting Bot in Background...\n\n");
+        system("./toxbot> /dev/null 2&>1&");
+        return 0;
+    }
+
+    if(strcmp(argv[1], "--help")==0 || strcmp(argv[1], "-h")==0){
+        printf("\ntoxbot [-Option/--Option]\n\nAvailable Options:\n\t-h / --help \t\t\t Shows this Message\n\t-b / --background\t\t Start in Background\n\t-a [ID]/ --addmaster [ID]\t Add ID to Master-Keys\n\nTox-Bot Fork from dj95. Original Tox-Bot https://github.com/JFreegman/ToxBot \n\n");
+        return 0;
+    }
+
+    if (strcmp(argv[1], "-a")==0 || strcmp(argv[1], "--addmaster")==0){
+        if(argv[2]!=NULL){
+            int len = strlen(argv[2]) + strlen("echo  >> masterkeys");
+            char cmd[len];
+            strncpy(cmd, "echo ", len);
+            strncat(cmd, argv[2], len);
+            strncat(cmd, " >> masterkeys", strlen(" >> masterkeys"));
+            system(cmd);
+            printf("\nAdded ID to Masters-File\n\n");
+        } else {
+            printf("\nID missing! Use -h for help.\n\n");
+        }
+        return 0;
+    }
 
     if (m == NULL) {
         fprintf(stderr, "Tox network failed to init.\n");
