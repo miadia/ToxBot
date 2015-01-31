@@ -218,7 +218,7 @@ static void cmd_help(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_L
     outmsg = "hallo : Lädt dich in den bestehenden Gruppen-Chat";
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
 
-    outmsg = "hallo <n> <p> : Lädt dich in eine mit einem Passwort geschütze Gruppe ein";
+    outmsg = "hallo <n> <p> : Lädt dich in eine mit einem Passwort geschützte Gruppe ein";
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
 
     if (friend_is_master(m, friendnum)) {
@@ -246,6 +246,29 @@ static void cmd_id(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_LEN
 
 static void cmd_info(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_LENGTH])
 {
+    //Owner-File
+    char owner[50];
+    int len = sizeof(owner);
+
+    FILE *in = fopen("settings", "rb");
+    char fInput[len + 2];
+
+    if (in != NULL){
+        int count = 0;
+        while(fgets(fInput, (len), in) != NULL) {
+            if (count == 0){
+                strncpy(owner, fInput+7, len-7);
+            }
+            count++;
+        }
+        fclose(in);
+    } else {
+        FILE *out = fopen("settings", "w");
+        fprintf(out, "%s\n", "Owner: Tox-Bot(change Owner in settings-File)");
+        strncpy(owner, "Tox-Bot(change Owner in settings-File)", len);
+        fclose(out);
+    }
+
     char outmsg[MAX_COMMAND_LENGTH];
     char timestr[64];
 
@@ -257,6 +280,9 @@ static void cmd_info(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_L
     uint32_t numfriends = tox_count_friendlist(m);
     uint32_t numonline = tox_get_num_online_friends(m);
     snprintf(outmsg, sizeof(outmsg), "Friends: %d (%d online)", numfriends, numonline);
+    tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
+
+    snprintf(outmsg, sizeof(outmsg), "Owner: %s", owner);
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
 
     snprintf(outmsg, sizeof(outmsg), "Inactive friends are purged after %"PRIu64" days",
@@ -751,7 +777,7 @@ static struct {
     { "hilfe",            cmd_help          },
     { "id",               cmd_id            },
     { "info",             cmd_info          },
-    { "hallo",             cmd_invite        },
+    { "hallo",            cmd_invite        },
     { "leave",            cmd_leave         },
     { "master",           cmd_master        },
     { "name",             cmd_name          },
