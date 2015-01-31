@@ -43,7 +43,7 @@
 #include "toxbot.h"
 #include "groupchats.h"
 
-#define VERSION "0.0.1"
+#define VERSION "0.1.1"
 #define FRIEND_PURGE_INTERVAL 3600
 
 bool FLAG_EXIT = false;    /* set on SIGINT */
@@ -441,7 +441,7 @@ int main(int argc, char *argv[])
     printf("|_   _|____  __ | __ )  ___ | |_ \n");
     printf("  | |/ _ \\ \\/ / |  _ \\ / _ \\| __|  \n");
     printf("  | | (_) >  <  | |_) | (_) | |_   \n");
-    printf("  |_|\\___/_/\\_\\ |____/ \\___/ \\__| \n");
+    printf("  |_|\\___/_/\\_\\ |____/ \\___/ \\__| \n\n");
 
     if (argc > 1 && (strcmp(argv[1], "-b")==0 || strcmp(argv[1], "--background")==0)){
         printf("\nStarting Bot in Background...\n\n");
@@ -449,7 +449,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    
+
     if(argc > 1 && (strcmp(argv[1], "--help")==0 || strcmp(argv[1], "-h")==0)){
         printf("\ntoxbot [-Option/--Option]\n\nAvailable Options:\n\t-h / --help \t\t\t Shows this Message\n\t-b / --background\t\t Start in Background\n\t-a [ID]/ --addmaster [ID]\t Add ID to Master-Keys\n\nTox-Bot Fork from dj95. Original Tox-Bot https://github.com/JFreegman/ToxBot \n\n");
         return 0;
