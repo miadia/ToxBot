@@ -8,6 +8,12 @@ Um den Bot zu Verwalten, muss die Tox-ID in die masterkey-Datei eingetragen werd
 
 Bemerkung: ToxBot akzeptiert Gruppen-Einladungen des Administrators automatisch.
 
+## Start-Optionen [NEU!]
+* `-h` oder `--help` - Zeigt die Hilfe
+*  `-b` oder `--background` - Führt den Bot im Hintergrund aus. Der Status wird über die tty ausgegeben.
+*  `-a [ID]` oder `--addmaster [ID]` - Gibt der ID Admin-Rechte für den Bot
+* 
+
 ### Non-Admin Befehle
 * `hilfe` - Zeigt diese Nachricht
 * `info` - Zeigt den Status des Bots
