@@ -40,11 +40,12 @@
 
 extern char *DATA_FILE;
 extern char *MASTERLIST_FILE;
+extern char *SETTINGS_FILE;
 extern struct Tox_Bot Tox_Bot;
 
 static void authent_failed(Tox *m, int friendnum)
 {
-    const char *outmsg = "Y..you're not my master";
+    const char *outmsg = "Du...Du bist nicht mein Master...";
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
 }
 
@@ -58,7 +59,7 @@ static void cmd_default(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAN
     }
 
     if (argc < 1) {
-        outmsg = "Error: Room number required";
+        outmsg = "Fehler: Raumnummer erforderlich";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -66,7 +67,7 @@ static void cmd_default(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAN
     int groupnum = atoi(argv[1]);
 
     if ((groupnum == 0 && strcmp(argv[1], "0")) || groupnum < 0) {
-        outmsg = "Error: Invalid room number";
+        outmsg = "fehler: Ungültige Raumnummer";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -74,14 +75,14 @@ static void cmd_default(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAN
     Tox_Bot.default_groupnum = groupnum;
 
     char msg[MAX_COMMAND_LENGTH];
-    snprintf(msg, sizeof(msg), "Default room number set to %d", groupnum);
+    snprintf(msg, sizeof(msg), "Standard Gruppennummer auf %d geändert", groupnum);
     tox_send_message(m, friendnum, (uint8_t *) msg, strlen(msg));
 
     char name[TOX_MAX_NAME_LENGTH];
     int len = tox_get_name(m, friendnum, (uint8_t *) name);
     name[len] = '\0';
 
-    printf("Default room number set to %d by %s", groupnum, name);
+    printf("Standard Gruppennummer auf %d geändert von %s", groupnum, name);
 }
 
 static void cmd_gmessage(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_LENGTH])
@@ -94,13 +95,13 @@ static void cmd_gmessage(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMA
     }
 
     if (argc < 1) {
-        outmsg = "Error: Group number required";
+        outmsg = "Fehler: Gruppen nummer erforderlich";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
 
     if (argc < 2) {
-        outmsg = "Error: Message required";
+        outmsg = "Fehler: Nachricht erforderlich";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -108,19 +109,19 @@ static void cmd_gmessage(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMA
     int groupnum = atoi(argv[1]);
 
     if (groupnum == 0 && strcmp(argv[1], "0")) {
-        outmsg = "Error: Invalid group number";
+        outmsg = "Fehler: Ungültige Gruppennummer";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
 
     if (group_index(groupnum) == -1) {
-        outmsg = "Error: Invalid group number";
+        outmsg = "Fehler: Ungültige Gruppennummer";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
 
     if (argv[2][0] != '\"') {
-        outmsg = "Error: Message must be enclosed in quotes";
+        outmsg = "Fehler: Nachricht muss in Anführungszeichen stehen";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -132,7 +133,7 @@ static void cmd_gmessage(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMA
     msg[len] = '\0';
 
     if (tox_group_message_send(m, groupnum, (uint8_t *) msg, strlen(msg)) == -1) {
-        outmsg = "Error: Failed to send message.";
+        outmsg = "Fehler: Konnte Nachricht nicht senden.";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -140,9 +141,9 @@ static void cmd_gmessage(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMA
     char name[TOX_MAX_NAME_LENGTH];
     int nlen = tox_get_name(m, friendnum, (uint8_t *) name);
     name[nlen] = '\0';
-    outmsg = "Message sent.";
+    outmsg = "Nachricht gesendet.";
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
-    printf("<%s> message to group %d: %s\n", name, groupnum, msg);
+    printf("<%s> Nachricht an Gruppe %d: %s\n", name, groupnum, msg);
 }
 
 static void cmd_group(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_LENGTH])
@@ -155,7 +156,7 @@ static void cmd_group(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_
     }
 
     if (argc < 1) {
-        outmsg = "Please specify the group type: audio or text";
+        outmsg = "Bitte setze den Gruppentyp auf: audio or text";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -174,8 +175,8 @@ static void cmd_group(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_
         groupnum = toxav_add_av_groupchat(m, NULL, NULL);
 
     if (groupnum == -1) {
-        printf("Group chat creation by %s failed to initialize\n", name);
-        outmsg = "Group chat instance failed to initialize.";
+        printf("Gruppenerstellung von %s konnte nicht initialisiert werden\n", name);
+        outmsg = "Gruppenchat konnte nicht initialisiert werden.";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -183,25 +184,25 @@ static void cmd_group(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_
     const char *password = argc >= 2 ? argv[2] : NULL;
 
     if (password && strlen(argv[2]) >= MAX_PASSWORD_SIZE) {
-        printf("Group chat creation by %s failed: Password too long\n", name);
-        outmsg = "Group chat instance failed to initialize: Password too long";
+        printf("Gruppenerstellung von %s fehlerhaft: Passwort zu lang\n", name);
+        outmsg = "Gruppenchat konnte nicht initialisiert werden: Passwort zu lang";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
 
     if (group_add(groupnum, type, password) == -1) {
-        printf("Group chat creation by %s failed\n", name);
-        outmsg = "Group chat creation failed";
+        printf("Gruppenerstellung von %s fehlerhaft\n", name);
+        outmsg = "Gruppe konnte nicht erstellt werden";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         tox_del_groupchat(m, groupnum);
         return;
     }
 
-    const char *pw = password ? " (Password protected)" : "";
-    printf("Group chat %d created by %s%s\n", groupnum, name, pw);
+    const char *pw = password ? " (Password geschützt)" : "";
+    printf("Gruppenchat %d wurde erstellt von %s%s\n", groupnum, name, pw);
 
     char msg[MAX_COMMAND_LENGTH];
-    snprintf(msg, sizeof(msg), "Group chat %d created%s", groupnum, pw);
+    snprintf(msg, sizeof(msg), "Gruppenchat %d erstallt %s", groupnum, pw);
     tox_send_message(m, friendnum, (uint8_t *) msg, strlen(msg));
 }
 
@@ -250,7 +251,7 @@ static void cmd_info(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_L
     char owner[50];
     int len = sizeof(owner);
 
-    FILE *in = fopen("settings", "rb");
+    FILE *in = fopen(SETTINGS_FILE, "rb");
     char fInput[len + 2];
 
     if (in != NULL){
@@ -263,9 +264,9 @@ static void cmd_info(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_L
         }
         fclose(in);
     } else {
-        FILE *out = fopen("settings", "w");
-        fprintf(out, "%s\n", "Owner: Tox-Bot(change Owner in settings-File)");
-        strncpy(owner, "Tox-Bot(change Owner in settings-File)", len);
+        FILE *out = fopen(SETTINGS_FILE, "w");
+        fprintf(out, "%s\n", "Owner: Tox-Bot(Ändere den Eigentümer im settings-File)");
+        strncpy(owner, "Tox-Bot(Ändere den Eigentümer im settings-File)", len);
         fclose(out);
     }
 
@@ -274,18 +275,18 @@ static void cmd_info(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_L
 
     uint64_t curtime = (uint64_t) time(NULL);
     get_elapsed_time_str(timestr, sizeof(timestr), curtime - Tox_Bot.start_time);
-    snprintf(outmsg, sizeof(outmsg), "Uptime: %s", timestr);
+    snprintf(outmsg, sizeof(outmsg), "Betriebszeit: %s", timestr);
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
 
     uint32_t numfriends = tox_count_friendlist(m);
     uint32_t numonline = tox_get_num_online_friends(m);
-    snprintf(outmsg, sizeof(outmsg), "Friends: %d (%d online)", numfriends, numonline);
+    snprintf(outmsg, sizeof(outmsg), "Freunde: %d (%d online)", numfriends, numonline);
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
 
-    snprintf(outmsg, sizeof(outmsg), "Owner: %s", owner);
+    snprintf(outmsg, sizeof(outmsg), "Eigentümer: %s", owner);
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
 
-    snprintf(outmsg, sizeof(outmsg), "Inactive friends are purged after %"PRIu64" days",
+    snprintf(outmsg, sizeof(outmsg), "Inaktive Freunde werden nach %"PRIu64" Tagen entfernt",
                                       Tox_Bot.inactive_limit / SECONDS_IN_DAY);
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
 
@@ -293,7 +294,7 @@ static void cmd_info(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_L
     uint32_t numchats = tox_count_chatlist(m);
 
     if (numchats == 0) {
-        tox_send_message(m, friendnum, (uint8_t *) "No active groupchats", strlen("No active groupchats"));
+        tox_send_message(m, friendnum, (uint8_t *) "Keine aktiven Gruppenchats", strlen("Keine aktiven Gruppenchats"));
         return;
     }
 
@@ -316,9 +317,9 @@ static void cmd_info(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_L
         if (num_peers != -1) {
             int idx = group_index(groupnum);
             const char *title = Tox_Bot.g_chats[idx].title_len
-                              ? Tox_Bot.g_chats[idx].title : "None";
+                              ? Tox_Bot.g_chats[idx].title : "Keiner";
             const char *type = tox_group_get_type(m, groupnum) == TOX_GROUPCHAT_TYPE_TEXT ? "Text" : "Audio";
-            snprintf(outmsg, sizeof(outmsg), "Group %d | %s | peers: %d | Title: %s", groupnum, type,
+            snprintf(outmsg, sizeof(outmsg), "Gruppe %d | %s | Teilnehmer: %d | Name: %s", groupnum, type,
                                                                                       num_peers, title);
             tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         }
@@ -336,7 +337,7 @@ static void cmd_invite(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
         groupnum = atoi(argv[1]);
 
         if (groupnum == 0 && strcmp(argv[1], "0")) {
-            outmsg = "Error: Invalid group number";
+            outmsg = "Fehler: Ungültige Gruppennummer.";
             tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
             return;
         }
@@ -345,7 +346,7 @@ static void cmd_invite(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
     int idx = group_index(groupnum);
 
     if (idx == -1) {
-        outmsg = "Group doesn't exist.";
+        outmsg = "Die Gruppe existiert nicht.";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -362,20 +363,20 @@ static void cmd_invite(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
         passwd = argv[2];
 
     if (has_pass && (!passwd || strcmp(argv[2], Tox_Bot.g_chats[idx].password) != 0)) {
-        fprintf(stderr, "Failed to invite %s to group %d (invalid password)\n", name, groupnum);
-        outmsg = "Invalid password.";
+        fprintf(stderr, "Fehler %s in die Gruppe %d einzuladen(falsches Passwort)\n", name, groupnum);
+        outmsg = "Falsches Passwort.";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
 
     if (tox_invite_friend(m, friendnum, groupnum) == -1) {
-        fprintf(stderr, "Failed to invite %s to group %d\n", name, groupnum);
-        outmsg = "Invite failed. Please report this problem on irc #tox @freenode.";
+        fprintf(stderr, "Fehler %s in die Gruppe %d einzuladen\n", name, groupnum);
+        outmsg = "Einladung gescheitert. Bitte melde das Problem im irc #tox @freenode.";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
 
-    printf("Invited %s to group %d\n", name, groupnum);
+    printf("Hab %s in Gruppe %d eingeladen\n", name, groupnum);
 }
 
 static void cmd_leave(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_LENGTH])
@@ -388,7 +389,7 @@ static void cmd_leave(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_
     }
 
     if (argc < 1) {
-        outmsg = "Error: Group number required";
+        outmsg = "Fehler: Gruppennummer erforderlich";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -396,13 +397,13 @@ static void cmd_leave(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_
     int groupnum = atoi(argv[1]);
 
     if (groupnum == 0 && strcmp(argv[1], "0")) {
-        outmsg = "Error: Invalid group number";
+        outmsg = "Fehler: Ungültige Gruppennummer";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
 
     if (tox_del_groupchat(m, groupnum) == -1) {
-        outmsg = "Error: Invalid group number";
+        outmsg = "Fehler: Ungültige Gruppennummer";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -414,8 +415,8 @@ static void cmd_leave(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_
 
     group_leave(groupnum);
 
-    printf("Left group %d (%s)\n", groupnum, name);
-    snprintf(msg, sizeof(msg), "Left group %d", groupnum);
+    printf("Verlasse Gruppe %d (%s)\n", groupnum, name);
+    snprintf(msg, sizeof(msg), "Verlasse Gruppe %d", groupnum);
     tox_send_message(m, friendnum, (uint8_t *) msg, strlen(msg));
 }
 
@@ -429,7 +430,7 @@ static void cmd_master(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
     }
 
     if (argc < 1) {
-        outmsg = "Error: Tox ID required";
+        outmsg = "Fehler: Tox ID erforderlich";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -437,7 +438,7 @@ static void cmd_master(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
     const char *id = argv[1];
 
     if (strlen(id) != TOX_FRIEND_ADDRESS_SIZE * 2) {
-        outmsg = "Error: Invalid Tox ID";
+        outmsg = "Fehler: Ungültige Tox ID";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -445,7 +446,7 @@ static void cmd_master(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
     FILE *fp = fopen(MASTERLIST_FILE, "a");
 
     if (fp == NULL) {
-        outmsg = "Error: could not find masterkeys file";
+        outmsg = "Fehler: Kann masterkey Datei nicht finden";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -457,8 +458,8 @@ static void cmd_master(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
     int len = tox_get_name(m, friendnum, (uint8_t *) name);
     name[len] = '\0';
 
-    printf("%s added master: %s\n", name, id);
-    outmsg = "ID added to masterkeys list";
+    printf("%s hat Master hinzugefügt: %s\n", name, id);
+    outmsg = "ID zu masterkeys hinzugefügt";
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
 }
 
@@ -472,7 +473,7 @@ static void cmd_name(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_L
     }
 
     if (argc < 1) {
-        outmsg = "Error: Name required";
+        outmsg = "Fehler: Name erforderlich";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -495,7 +496,7 @@ static void cmd_name(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_L
     int nlen = tox_get_name(m, friendnum, (uint8_t *) m_name);
     m_name[nlen] = '\0';
 
-    printf("%s set name to %s\n", m_name, name);
+    printf("%s ändert Name zu %s\n", m_name, name);
     save_data(m, DATA_FILE);
 }
 
@@ -504,7 +505,7 @@ static void cmd_passwd(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
     const char *outmsg;
 
     if (argc < 1) {
-        outmsg = "Error: group number required";
+        outmsg = "Fehler: Gruppennummer erforderlich";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -512,7 +513,7 @@ static void cmd_passwd(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
     int groupnum = atoi(argv[1]);
 
     if (groupnum == 0 && strcmp(argv[1], "0")) {
-        outmsg = "Error: Invalid group number";
+        outmsg = "Fehler: Ungültige Gruppennummer";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -520,7 +521,7 @@ static void cmd_passwd(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
     int idx = group_index(groupnum);
 
     if (idx == -1) {
-        outmsg = "Error: Invalid group number";
+        outmsg = "Fehler: Ungültige Gruppennummer";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -534,14 +535,14 @@ static void cmd_passwd(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
         Tox_Bot.g_chats[idx].has_pass = false;
         memset(Tox_Bot.g_chats[idx].password, 0, MAX_PASSWORD_SIZE);
 
-        outmsg = "No password set";
+        outmsg = "Kein Passwort gesetzt";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
-        printf("No password set for group %d by %s\n", groupnum, name);
+        printf("Kein Passwort für Gruppe %d von %s gesetzt\n", groupnum, name);
         return;
     }
 
     if (strlen(argv[2]) >= MAX_PASSWORD_SIZE) {
-        outmsg = "Password too long";
+        outmsg = "Passwort zu lang";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -549,9 +550,9 @@ static void cmd_passwd(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
     Tox_Bot.g_chats[idx].has_pass = true;
     snprintf(Tox_Bot.g_chats[idx].password, sizeof(Tox_Bot.g_chats[idx].password), "%s", argv[2]);
 
-    outmsg = "Password set";
+    outmsg = "Passwort geändert";
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
-    printf("Password for group %d set by %s\n", groupnum, name);
+    printf("Passwort für Gruppe %d geändert von %s\n", groupnum, name);
 
 }
 
@@ -565,7 +566,7 @@ static void cmd_purge(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_
     }
 
     if (argc < 1) {
-        outmsg = "Error: number > 0 required";
+        outmsg = "Fehler: Nummer > 0 erforderlich";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -573,7 +574,7 @@ static void cmd_purge(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_
     uint64_t days = (uint64_t) atoi(argv[1]);
 
     if (days <= 0) {
-        outmsg = "Error: number > 0 required";
+        outmsg = "Fehler: Nummer > 0 erforderlich";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -586,10 +587,10 @@ static void cmd_purge(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_
     name[nlen] = '\0';
 
     char msg[MAX_COMMAND_LENGTH];
-    snprintf(msg, sizeof(msg), "Purge time set to %"PRIu64" days", days);
+    snprintf(msg, sizeof(msg), "Entfernen Zeit auf %"PRIu64" Tage geändert", days);
     tox_send_message(m, friendnum, (uint8_t *) msg, strlen(msg));
 
-    printf("Purge time set to %"PRIu64" days by %s\n", days, name);
+    printf("Entfernen Zeit auf %"PRIu64" Tage geändert von %s\n", days, name);
 }
 
 static void cmd_status(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_LENGTH])
@@ -602,7 +603,7 @@ static void cmd_status(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
     }
 
     if (argc < 1) {
-        outmsg = "Error: status required";
+        outmsg = "Fehler: Status erforderlich";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -617,7 +618,7 @@ static void cmd_status(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
     else if (strcasecmp(status, "busy") == 0)
         type = TOX_USERSTATUS_BUSY;
     else {
-        outmsg = "Invalid status. Valid statuses are: online, busy and away.";
+        outmsg = "Ungültiger Status. Gültige Statusmeldungen sind: online, busy und away.";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -628,7 +629,7 @@ static void cmd_status(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND
     int nlen = tox_get_name(m, friendnum, (uint8_t *) name);
     name[nlen] = '\0';
 
-    printf("%s set status to %s\n", name, status);
+    printf("%s ändert Status auf %s\n", name, status);
     save_data(m, DATA_FILE);
 }
 
@@ -642,13 +643,13 @@ static void cmd_statusmessage(Tox *m, int friendnum, int argc, char (*argv)[MAX_
     }
 
     if (argc < 1) {
-        outmsg = "Error: message required";
+        outmsg = "Fehler: Nachricht erforderlich";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
 
     if (argv[1][0] != '\"') {
-        outmsg = "Error: message must be enclosed in quotes";
+        outmsg = "Fehler: Nachricht muss in Anführungszeichen stehen";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -665,7 +666,7 @@ static void cmd_statusmessage(Tox *m, int friendnum, int argc, char (*argv)[MAX_
     int nlen = tox_get_name(m, friendnum, (uint8_t *) name);
     name[nlen] = '\0';
 
-    printf("%s set status message to \"%s\"\n", name, msg);
+    printf("%s ändert Status auf \"%s\"\n", name, msg);
     save_data(m, DATA_FILE);
 }
 
@@ -679,13 +680,13 @@ static void cmd_title_set(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMM
     }
 
     if (argc < 2) {
-        outmsg = "Error: Two arguments are required";
+        outmsg = "Fehler: 2 Argumente erforderlich";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
 
     if (argv[2][0] != '\"') {
-        outmsg = "Error: title must be enclosed in quotes";
+        outmsg = "Fehler: Titel muss in Anführungszeichen stehen";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -693,7 +694,7 @@ static void cmd_title_set(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMM
     int groupnum = atoi(argv[1]);
 
     if (groupnum == 0 && strcmp(argv[1], "0")) {
-        outmsg = "Error: Invalid group number";
+        outmsg = "Fehler: Ungültige Gruppennummer";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
@@ -709,9 +710,9 @@ static void cmd_title_set(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMM
     name[nlen] = '\0';
 
     if (tox_group_set_title(m, groupnum, (uint8_t *) title, len) != 0) {
-        outmsg = "Failed to set title. This may be caused by an invalid group number or an empty room";
+        outmsg = "Konnte den Titel nicht ändern. Das kann durch eine falsche Gruppennummer oder leere Gruppe ausgelöst werden";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
-        printf("%s failed to set the title '%s' for group %d\n", name, title, groupnum);
+        printf("%s konnte den Titel '%s' für Gruppe %d nicht ändern\n", name, title, groupnum);
         return;
     }
 
@@ -719,9 +720,9 @@ static void cmd_title_set(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMM
     memcpy(Tox_Bot.g_chats[idx].title, title, len + 1);
     Tox_Bot.g_chats[idx].title_len = len;
 
-    outmsg = "Group title set";
+    outmsg = "Gruppentitel geändert";
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
-    printf("%s set group %d title to %s\n", name, groupnum, title);
+    printf("%s ändert Gruppentitel der Gruppe %d zu %s\n", name, groupnum, title);
 }
 
 /* Parses input command and puts args into arg array.
