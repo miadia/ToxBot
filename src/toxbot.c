@@ -49,6 +49,7 @@
 bool FLAG_EXIT = false;    /* set on SIGINT */
 char *DATA_FILE = "toxbot_save";
 char *MASTERLIST_FILE = "masterkeys";
+char *SETTINGS_FILE = "settings";
 
 struct Tox_Bot Tox_Bot;
 
@@ -370,8 +371,8 @@ static void print_profile_info(Tox *m)
     name[len] = '\0';
     uint32_t numfriends = tox_count_friendlist(m);
     printf("Name: %s\n", name);
-    printf("Contacts: %d\n", numfriends);
-    printf("Inactive contacts purged after %"PRIu64" days\n", Tox_Bot.inactive_limit / SECONDS_IN_DAY);
+    printf("Kontakte: %d\n", numfriends);
+    printf("Inaktive Nutzer werden nach %"PRIu64" Tagen entfernt\n", Tox_Bot.inactive_limit / SECONDS_IN_DAY);
 }
 
 static void purge_inactive_friends(Tox *m)
@@ -427,6 +428,17 @@ static useconds_t optimal_msleepval(uint64_t *looptimer, uint64_t *loopcount, ui
     return new_sleep;
 }
 
+//check ID
+/*
+bool checkID(int32_t id){
+    Messenger *m = tox;
+    if (m_addfriend_norequest(m, id)){
+        return true;
+    } else {
+        return false;
+    }
+}*/
+
 int main(int argc, char *argv[])
 {
     signal(SIGINT, catch_SIGINT);
@@ -444,39 +456,43 @@ int main(int argc, char *argv[])
     printf("  |_|\\___/_/\\_\\ |____/ \\___/ \\__| \n\n");
 
     if (argc > 1 && (strcmp(argv[1], "-b")==0 || strcmp(argv[1], "--background")==0)){
-        printf("\nStarting Bot in Background...\n\n");
+        printf("\nStarte Bot im Hintergrund...\n\n");
         system("./toxbot> /dev/null 2&>1&");
         return 0;
     }
 
 
     if(argc > 1 && (strcmp(argv[1], "--help")==0 || strcmp(argv[1], "-h")==0)){
-        printf("\ntoxbot [-Option/--Option]\n\nAvailable Options:\n\t-h / --help \t\t\t Shows this Message\n\t-b / --background\t\t Start in Background\n\t-a [ID]/ --addmaster [ID]\t Add ID to Master-Keys\n\nTox-Bot Fork from dj95. Original Tox-Bot https://github.com/JFreegman/ToxBot \n\n");
+        printf("\ntoxbot [-Option/--Option]\n\nMögliche Optionen:\n\t-h / --help \t\t\t Zeigt diese Nachricht\n\t-b / --background\t\t Startet den Bot im Hintergrund\n\t-a [ID]/ --addmaster [ID]\t Fügt die ID der Masterdatei hinzu\n\nTox-Bot Fork von dj95. Originaler Tox-Bot https://github.com/JFreegman/ToxBot \n\n");
         return 0;
     }
 
     if (argc > 1 && (strcmp(argv[1], "-a")==0 || strcmp(argv[1], "--addmaster")==0)){
         if(argv[2]!=NULL){
             int len = strlen(argv[2]) + strlen("echo  >> masterkeys");
+            if (len != (76 + strlen("echo  >> masterkeys"))){
+                printf("Ungültiges ID-Format! Bitte die 76-stellige ID eingeben.\n");
+                return 1;
+            }
             char cmd[len];
             strncpy(cmd, "echo ", len);
             strncat(cmd, argv[2], len);
             strncat(cmd, " >> masterkeys", strlen(" >> masterkeys"));
             system(cmd);
-            printf("\nAdded ID to Masters-File\n\n");
+            printf("\nDie ID wurde erfolgreich hinzugefügt\n\n");
         } else {
-            printf("\nID missing! Use -h for help.\n\n");
+            printf("\nID fehtl! Benutze -h um die Hilfe zu zeigen.\n\n");
         }
         return 0;
     }
 
     if (m == NULL) {
-        fprintf(stderr, "Tox network failed to init.\n");
+        fprintf(stderr, "Tox Netzwerk konnte nicht initialisiert werden.\n");
         exit(EXIT_FAILURE);
     }
 
     if (load_data(m, DATA_FILE) == -1)
-        fprintf(stderr, "load_data failed\n");
+        fprintf(stderr, "Daten konnten nicht geladen werden\n");
 
     init_toxbot_state();
     print_profile_info(m);
