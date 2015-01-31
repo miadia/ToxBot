@@ -1,0 +1,7 @@
+0.1.1 - Einführung einer settings-Datei, um Einstellungen zu speichern. Vorerst kann man dort nur den Namen des Eigentümers festlegen, der dann auch unter info im Chat angezeigt wird.
+
+0.1.0 - Bot kann als Hintergrundprozess(noch kein Daemon) gestartet werden und beim Start mit Flags versehen werden.
+
+0.0.2 - Einige deutsche Übersetzungen, vor allem für Nutzer(für Admins folgt später)
+
+0.0.1 - Originale Version von https://github.com/JFreegman/ToxBot
