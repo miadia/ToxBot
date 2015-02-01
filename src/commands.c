@@ -767,16 +767,9 @@ static void cmd_register(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMA
     int len = strlen(id) - 1;
     id[len] = '\0';
 
-    int length = sizeof(id) + sizeof (name) + strlen("echo \t:\t  >> contacts") + 10;
-
-    char cmd[length];
-
-    strncpy(cmd, "echo ", length);
-    strncat(cmd, name, sizeof(name));
-    strncat(cmd, "\t:\t", sizeof(name));
-    strncat(cmd, id, sizeof(id));
-    strncat(cmd, " >> contacts", strlen(" >> contacts"));
-    system(cmd);
+    FILE *out = fopen("contacts", "a");
+    fprintf(out, "%s\t:\t%s\n", name, id);
+    fclose(out);
 
     outmsg = "Registrierung erfolgreich";
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
