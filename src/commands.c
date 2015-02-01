@@ -222,6 +222,12 @@ static void cmd_help(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_L
     outmsg = "hallo <n> <p> : Lädt dich in eine mit einem Passwort geschützte Gruppe ein";
     tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
 
+    outmsg = "register <n> <id> : Speichert deine Kontaktdaten im Telefonbuch";
+    tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
+
+    outmsg = "kontakte : Zeigt alle registrierten Kontakte des Bots an";
+    tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
+
     if (friend_is_master(m, friendnum)) {
         outmsg = "Für Master-Kommands gucke in die Commands.txt oder frage den Admin des Bots";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
@@ -725,6 +731,90 @@ static void cmd_title_set(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMM
     printf("%s ändert Gruppentitel der Gruppe %d zu %s\n", name, groupnum, title);
 }
 
+
+//------------------------------------------------------------------------------
+
+static void cmd_register(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_LENGTH])
+{
+    const char *outmsg;
+
+
+    if (argc < 2) {
+        outmsg = "Fehler: 3 Argumente erforderlich";
+        tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
+        return;
+    }
+
+    if (argv[1][0] != '\"') {
+        outmsg = "Fehler: Name muss in Anführungszeichen stehen";
+        tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
+        return;
+    }
+
+    if (argv[3][0] != '\"') {
+        outmsg = "Fehler: Name muss in Anführungszeichen stehen";
+        tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
+        return;
+    }
+
+    char name[MAX_COMMAND_LENGTH];
+    snprintf(name, sizeof(name), "%s", &argv[1][1]);
+    int len1 = strlen(name) - 1;
+    name[len1] = '\0';
+
+    char id[TOX_FRIEND_ADDRESS_SIZE];
+    snprintf(id, sizeof(id), "%s", &argv[3][1]);
+    int len = strlen(id) - 1;
+    id[len] = '\0';
+
+    int length = sizeof(id) + sizeof (name) + strlen("echo \t:\t  >> contacts") + 10;
+
+    char cmd[length];
+
+    strncpy(cmd, "echo ", length);
+    strncat(cmd, name, sizeof(name));
+    strncat(cmd, "\t:\t", sizeof(name));
+    strncat(cmd, id, sizeof(id));
+    strncat(cmd, " >> contacts", strlen(" >> contacts"));
+    system(cmd);
+
+    outmsg = "Registrierung erfolgreich";
+    tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
+    printf("%s hat sich registriert.\n", name);
+}
+
+static void cmd_show_contacts(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMAND_LENGTH])
+{
+    //Owner-File
+    char owner[MAX_COMMAND_LENGTH + TOX_FRIEND_ADDRESS_SIZE + 30];
+    int len = MAX_COMMAND_LENGTH + TOX_FRIEND_ADDRESS_SIZE + 30;
+    char outmsg[len];
+
+    FILE *in = fopen("contacts", "rb");
+    char fInput[len + 2];
+
+    snprintf(outmsg, sizeof(outmsg), "Kontakte\n");
+    tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
+
+    if (in != NULL){
+        int count = 0;
+        while(fgets(fInput, (len), in) != NULL) {
+            strncpy(outmsg, fInput, len);
+            *strchr(outmsg, '\n') = ' ';
+            tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
+            count++;
+        }
+        fclose(in);
+    } else {
+        printf("Keine Einträge");
+        strncpy(owner, "Keine Einträge", len);
+        strncpy(outmsg, owner, len);
+        tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
+        fclose(in);
+    }
+}
+
+
 /* Parses input command and puts args into arg array.
    Returns number of arguments on success, -1 on failure. */
 static int parse_command(const char *input, char (*args)[MAX_COMMAND_LENGTH])
@@ -787,6 +877,8 @@ static struct {
     { "status",           cmd_status        },
     { "statusmessage",    cmd_statusmessage },
     { "title",            cmd_title_set     },
+    { "register",         cmd_register      },
+    { "kontakte",         cmd_show_contacts },
     { NULL,               NULL              },
 };
 
