@@ -43,7 +43,7 @@
 #include "toxbot.h"
 #include "groupchats.h"
 
-#define VERSION "0.1.1"
+#define VERSION "0.2"
 #define FRIEND_PURGE_INTERVAL 3600
 
 bool FLAG_EXIT = false;    /* set on SIGINT */
