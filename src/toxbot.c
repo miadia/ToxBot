@@ -159,43 +159,6 @@ static void cb_friend_request(Tox *m, const uint8_t *public_key, const uint8_t *
 {
     tox_add_friend_norequest(m, public_key);
     save_data(m, DATA_FILE);
-
-
-    uint32_t i;
-    uint32_t numfriends = tox_count_friendlist(m);
-
-    if (numfriends == 0)
-        return;
-
-        int32_t *friend_list = malloc(numfriends * sizeof(int32_t));
-
-        if (friend_list == NULL)
-            exit(EXIT_FAILURE);
-
-            if (tox_get_friendlist(m, friend_list, numfriends) == 0) {
-                free(friend_list);
-                return;
-            }
-
-            system("rm friends");
-            int len = 200;
-            for (i = 0; i < numfriends; ++i) {
-                uint32_t friendnum = friend_list[i];
-
-                if (!tox_friend_exists(m, friendnum))
-                    continue;
-
-                char cmd[len];
-                char id[len];
-
-                sprintf(id, "%"PRIu32"", friendnum);
-                strncpy(cmd, "echo ", len);
-                strncat(cmd, id, len);
-                strncat(cmd, " >> friends", strlen(" >> friends"));
-                system(cmd);
-            }
-
-            free(friend_list);
 }
 
 static void cb_friend_message(Tox *m, int32_t friendnumber, const uint8_t *string, uint16_t length,
@@ -558,52 +521,6 @@ int main(int argc, char *argv[])
     useconds_t msleepval = 40000;
     uint64_t loopcount = 0;
 
-    //initialize friend_list
-
-    uint32_t i;
-    uint32_t numfriends = tox_count_friendlist(m);
-
-    if (numfriends != 0) {
-
-        int32_t *friend_list = malloc(numfriends * sizeof(int32_t));
-
-        if (friend_list == NULL)
-            exit(EXIT_FAILURE);
-
-            if (tox_get_friendlist(m, friend_list, numfriends) == 0) {
-                free(friend_list);
-            } else {
-                system("rm friends");
-                int len = TOX_FRIEND_ADDRESS_SIZE * 2 + 1 + strlen("echo  >> friends");
-                for (i = 0; i < numfriends; ++i) {
-                    uint32_t friendnum = friend_list[i];
-
-                    if (!tox_friend_exists(m, friendnum))
-                        continue;
-
-                    char cmd[len];
-
-                    char friend_key[TOX_CLIENT_ID_SIZE];
-                    tox_get_client_id(m, friendnum, (uint8_t *) friend_key);
-
-                    char outmsg[TOX_FRIEND_ADDRESS_SIZE * 2 + 1];
-
-                    for (int i = 0; i < TOX_FRIEND_ADDRESS_SIZE; ++i) {
-                        char d[3];
-                        sprintf(d, "%02X", friend_key[i] & 0xff);
-                        memcpy(outmsg + i * 2, d, 2);
-                    }
-
-                    //sprintf(id, "%"PRIu32"", friend_key);
-                    strncpy(cmd, "echo ", len);
-                    strncat(cmd, outmsg, len);
-                    strncat(cmd, " >> friends", strlen(" >> friends"));
-                    system(cmd);
-                }
-                free(friend_list);
-            }
-
-    }
     while (!FLAG_EXIT) {
         uint64_t cur_time = (uint64_t) time(NULL);
 
