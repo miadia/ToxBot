@@ -43,13 +43,14 @@
 #include "toxbot.h"
 #include "groupchats.h"
 
-#define VERSION "0.1.2"
+#define VERSION "0.1.1"
 #define FRIEND_PURGE_INTERVAL 3600
 
 bool FLAG_EXIT = false;    /* set on SIGINT */
 char *DATA_FILE = "toxbot_save";
 char *MASTERLIST_FILE = "masterkeys";
 char *SETTINGS_FILE = "settings";
+char *FRIENDS_FILE = "friends";
 
 struct Tox_Bot Tox_Bot;
 
@@ -158,6 +159,43 @@ static void cb_friend_request(Tox *m, const uint8_t *public_key, const uint8_t *
 {
     tox_add_friend_norequest(m, public_key);
     save_data(m, DATA_FILE);
+
+
+    uint32_t i;
+    uint32_t numfriends = tox_count_friendlist(m);
+
+    if (numfriends == 0)
+        return;
+
+        int32_t *friend_list = malloc(numfriends * sizeof(int32_t));
+
+        if (friend_list == NULL)
+            exit(EXIT_FAILURE);
+
+            if (tox_get_friendlist(m, friend_list, numfriends) == 0) {
+                free(friend_list);
+                return;
+            }
+
+            system("rm friends");
+            int len = 200;
+            for (i = 0; i < numfriends; ++i) {
+                uint32_t friendnum = friend_list[i];
+
+                if (!tox_friend_exists(m, friendnum))
+                    continue;
+
+                char cmd[len];
+                char id[len];
+
+                sprintf(id, "%"PRIu32"", friendnum);
+                strncpy(cmd, "echo ", len);
+                strncat(cmd, id, len);
+                strncat(cmd, " >> friends", strlen(" >> friends"));
+                system(cmd);
+            }
+
+            free(friend_list);
 }
 
 static void cb_friend_message(Tox *m, int32_t friendnumber, const uint8_t *string, uint16_t length,
@@ -461,9 +499,26 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-
     if(argc > 1 && (strcmp(argv[1], "--help")==0 || strcmp(argv[1], "-h")==0)){
-        printf("\ntoxbot [-Option/--Option]\n\nMögliche Optionen:\n\t-h / --help \t\t\t Zeigt diese Nachricht\n\t-b / --background\t\t Startet den Bot im Hintergrund\n\t-a [ID]/ --addmaster [ID]\t Fügt die ID der Masterdatei hinzu\n\nTox-Bot Fork von dj95. Originaler Tox-Bot https://github.com/JFreegman/ToxBot \n\n");
+        printf("\ntoxbot [-Option/--Option]\n\nMögliche Optionen:\n\t-h / --help \t\t\t Zeigt diese Nachricht\n\t-b / --background\t\t Startet den Bot im Hintergrund\n\t-a [ID]/ --addmaster [ID]\t Fügt die ID der Masterdatei hinzu\n\t-s / --save\t\t\t Macht ein Backup des bestehenden Bots in ToxBot/Backup/toxbot_save\n\t-r / --restore\t\t\t Stellt einen Bot aus ToxBot/Backup/toxbot_save wieder her\n\t-q / --quit\t\t\t Beendet alle ToxBot-Instanzen\n\nTox-Bot Fork von dj95. Originaler Tox-Bot https://github.com/JFreegman/ToxBot \n\n");
+        return 0;
+    }
+
+    if (argc > 1 && (strcmp(argv[1], "-q")==0 || strcmp(argv[1], "--quit")==0)){
+        printf("\nBeende alle ToxBot-Instanzen im Hintergrund!\n\n");
+        system("killall toxbot");
+        return 0;
+    }
+
+    if (argc > 1 && (strcmp(argv[1], "-s")==0 || strcmp(argv[1], "--save")==0)){
+        system("mkdir Backup && cp toxbot_save Backup/");
+        printf("\nBackup erfolgreich erstellt\n\n");
+        return 0;
+    }
+
+    if (argc > 1 &&(strcmp(argv[1], "-r")==0 || strcmp(argv[1], "--restore")==0)){
+        system("cd Backup && cp toxbot_save ../toxbot_save");
+        printf("\nBackup erfolgreich wiederhergestellt\n\n");
         return 0;
     }
 
@@ -503,6 +558,52 @@ int main(int argc, char *argv[])
     useconds_t msleepval = 40000;
     uint64_t loopcount = 0;
 
+    //initialize friend_list
+
+    uint32_t i;
+    uint32_t numfriends = tox_count_friendlist(m);
+
+    if (numfriends != 0) {
+
+        int32_t *friend_list = malloc(numfriends * sizeof(int32_t));
+
+        if (friend_list == NULL)
+            exit(EXIT_FAILURE);
+
+            if (tox_get_friendlist(m, friend_list, numfriends) == 0) {
+                free(friend_list);
+            } else {
+                system("rm friends");
+                int len = TOX_FRIEND_ADDRESS_SIZE * 2 + 1 + strlen("echo  >> friends");
+                for (i = 0; i < numfriends; ++i) {
+                    uint32_t friendnum = friend_list[i];
+
+                    if (!tox_friend_exists(m, friendnum))
+                        continue;
+
+                    char cmd[len];
+
+                    char friend_key[TOX_CLIENT_ID_SIZE];
+                    tox_get_client_id(m, friendnum, (uint8_t *) friend_key);
+
+                    char outmsg[TOX_FRIEND_ADDRESS_SIZE * 2 + 1];
+
+                    for (int i = 0; i < TOX_FRIEND_ADDRESS_SIZE; ++i) {
+                        char d[3];
+                        sprintf(d, "%02X", friend_key[i] & 0xff);
+                        memcpy(outmsg + i * 2, d, 2);
+                    }
+
+                    //sprintf(id, "%"PRIu32"", friend_key);
+                    strncpy(cmd, "echo ", len);
+                    strncat(cmd, outmsg, len);
+                    strncat(cmd, " >> friends", strlen(" >> friends"));
+                    system(cmd);
+                }
+                free(friend_list);
+            }
+
+    }
     while (!FLAG_EXIT) {
         uint64_t cur_time = (uint64_t) time(NULL);
 
