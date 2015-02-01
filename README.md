@@ -12,6 +12,9 @@ Bemerkung: ToxBot akzeptiert Gruppen-Einladungen des Administrators automatisch.
 * `-h` oder `--help` - Zeigt die Hilfe
 *  `-b` oder `--background` - Führt den Bot im Hintergrund aus. Der Status wird über die tty ausgegeben.
 *  `-a [ID]` oder `--addmaster [ID]` - Gibt der ID Admin-Rechte für den Bot
+*  `-s` oder `--save` - Speichert die toxbot_save im Backup-Ordner
+*  `-r` oder `--restore` - Stellt den Bot aus der toxbot_save wieder her
+ 
 
 ### Non-Admin Befehle
 * `hilfe` - Zeigt diese Nachricht
@@ -19,6 +22,9 @@ Bemerkung: ToxBot akzeptiert Gruppen-Einladungen des Administrators automatisch.
 * `id` - Zeigt die Tox-ID des Bots
 * `hallo` - Lädt dich in den bestehenden Gruppen-Chat
 * `hallo <n> <pass>` - Lädt dich in eine mit einem Passwort geschütze Gruppe ein
+* `register <n> <id>` - Registriert Name und ID im Telefonbuch
+* `kontakte` - Gibt das gesamte Telefonbuch aus
+
 
 ## Anhängigkeiten
 pkg-config
