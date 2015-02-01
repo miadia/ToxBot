@@ -762,7 +762,7 @@ static void cmd_register(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMA
     int len1 = strlen(name) - 1;
     name[len1] = '\0';
 
-    char id[TOX_FRIEND_ADDRESS_SIZE];
+    char id[100];
     snprintf(id, sizeof(id), "%s", &argv[3][1]);
     int len = strlen(id) - 1;
     id[len] = '\0';
