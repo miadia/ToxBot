@@ -1,3 +1,5 @@
+0.2.0 - Telefonbuch eingefügt. Nutzer können sich mit register <n> <id> registrieren. Alle Kontakte werden mit kontakte ausgegeben. Kontakte werden in contacts gespeichert.
+
 0.1.2 - Deutsche Übersetzung hizugefügt. Prüft die ID auf Länge bei -a
 
 0.1.1 - Einführung einer settings-Datei, um Einstellungen zu speichern. Vorerst kann man dort nur den Namen des Eigentümers festlegen, der dann auch unter info im Chat angezeigt wird.
