@@ -751,8 +751,8 @@ static void cmd_register(Tox *m, int friendnum, int argc, char (*argv)[MAX_COMMA
         return;
     }
 
-    if (argv[3][0] != '\"') {
-        outmsg = "Fehler: Name muss in Anführungszeichen stehen";
+    if (argv[2][0] != '\"') {
+        outmsg = "Fehler: ID muss in Anführungszeichen stehen";
         tox_send_message(m, friendnum, (uint8_t *) outmsg, strlen(outmsg));
         return;
     }
